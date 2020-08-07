@@ -3,7 +3,7 @@ import styled from "styled-components";
 import fetch from "node-fetch";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { okaidia } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { googlecode } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { Markup, TransformCallback } from "interweave";
 import Header from "~/components/Header";
 
@@ -15,7 +15,7 @@ type Props = { entry: Entry | null; className?: string };
 const transform: TransformCallback = (node, children, config) => {
   if (node.tagName === "CODE") {
     return (
-      <SyntaxHighlighter language="tsx" style={okaidia}>
+      <SyntaxHighlighter language="javascript" style={googlecode}>
         {children}
       </SyntaxHighlighter>
     );
