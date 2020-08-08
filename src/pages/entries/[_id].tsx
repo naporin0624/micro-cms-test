@@ -1,30 +1,15 @@
 import React from "react";
 import styled from "styled-components";
-import fetch from "node-fetch";
 
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { googlecode } from "react-syntax-highlighter/dist/cjs/styles/hljs";
-import { Markup, TransformCallback } from "interweave";
+import { Markup } from "interweave";
 import Header from "~/components/Header";
 
 import { GetServerSideProps } from "next";
 import { Entry } from "~/types";
+import { getEntry } from "~/lib/apis";
+import { transform } from "~/lib/transform";
 
 type Props = { entry: Entry | null; className?: string };
-
-const transform: TransformCallback = (node, children, config) => {
-  if (node.tagName === "CODE") {
-    return (
-      <SyntaxHighlighter language="javascript" style={googlecode}>
-        {children}
-      </SyntaxHighlighter>
-    );
-  }
-
-  if (node.tagName === "IMG") {
-    return <img src={node.getAttributeNode("src").nodeValue} width="80%" />;
-  }
-};
 
 const EntryPage: React.FC<Props> = ({ entry, className }) => {
   return (
@@ -71,9 +56,7 @@ type Params = {
 export const getServerSideProps: GetServerSideProps<Props, Params> = async context => {
   const id: string = context.params["_id"];
   try {
-    const headers = { "X-API-KEY": "3fdae01b-781b-4e04-ab86-432dc5790914" };
-    const response = await fetch(`https://napochaan.microcms.io/api/v1/entries/${id}`, { headers });
-    const entry: Entry = await response.json();
+    const entry = await getEntry(id);
     return { props: { entry } };
   } catch (e) {
     context.res.writeHead(302, { Location: "/" });
